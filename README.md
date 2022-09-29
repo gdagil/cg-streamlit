@@ -1,4 +1,4 @@
-# cg-steamlit
+# cg-streamlit
 
 Лабораторные работы по дисциплине компьютерная графика, выполненные с помощью [Streamlit](https://streamlit.io/)
 
