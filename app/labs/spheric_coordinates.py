@@ -15,7 +15,7 @@ class Scoords:
             * $a,b, k,A,B$ - константы, значения которых выбираются пользователем.
         ''')   
         b_default = float("{0:.1f}".format(2*np.pi))
-        a_varible = st.slider('Выберите A', 0.01, b_default-0.04, step=0.01, value=0.01)
+        a_varible = st.slider('Выберите A', 0.01, b_default-0.04, step=0.01, value=3.13)
         b_varible = st.slider('Выберите B', a_varible, b_default, step=0.01, value=b_default)
         a_lower_case_varible = st.slider('Выберите a', -1, 1, step=2, value=1)
         st.latex(f'0 < {a_varible} \leq ϕ \leq {b_varible}')
@@ -23,4 +23,4 @@ class Scoords:
 
     @staticmethod
     def logistic_func(a, p):
-        return a*p
+        return a/p
