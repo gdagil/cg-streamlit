@@ -23,4 +23,4 @@ class Scoords:
 
     @staticmethod
     def logistic_func(a, p):
-        return a*p
+        return a/p
