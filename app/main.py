@@ -2,7 +2,7 @@ import streamlit as st
 import numpy as np
 
 from utils import Plotter, Figure, PickerFunc
-from labs import Scoords, Wframe_3d
+from labs import Scoords, Wframe_3d, BSpline
 
 
 st.set_page_config(
@@ -17,12 +17,12 @@ with st.sidebar:
         'Выбор рабораторных работ:',
         [
             'ЛР1 - функция в полярных координатах',
-            'ЛР2 - гранная прямая правильная призма'
+            'ЛР2 - гранная прямая правильная призма',
+            'ЛР7 - Построение плоских полиномиальных кривых',
         ],
         label_visibility='hidden')
 
 
-# Logistic Function
 if activation_function == 'ЛР1 - функция в полярных координатах':
     with st.sidebar:
         a_varible, b_varible, a_lower_case_varible = Scoords.st_text_menu(st)
@@ -52,3 +52,28 @@ if activation_function == 'ЛР2 - гранная прямая правильн�
 
     st.plotly_chart(prism, use_container_width=True)
 
+
+
+if activation_function == 'ЛР7 - Построение плоских полиномиальных кривых':
+    with st.sidebar:
+        BSpline.st_text_menu(st)
+
+    source_dots = Plotter.get_bokeh_column_data_source(dict(x=[1, 2.5, 4, 8, 9], y=[2, 5, 8, 2, 7]))
+    source_b_spline = Plotter.get_bokeh_column_data_source(dict(x=[], y=[]))
+    source_b_k = Plotter.get_bokeh_column_data_source(dict(x=[2], y=[2]))
+
+    fig = Plotter.get_bakeh_dotes_drag(source_dots)
+    slider = Plotter.get_bokeh_slider()
+
+    callback = Plotter.get_bokeh_custom_js_callback(
+        path="./app/utils/src/b_s_callback.js",
+        sourses=dict(s_b=source_b_spline, s_d=source_dots, dim_b_s=source_b_k)
+    )
+    Plotter.add_bokeh_line(fig, x='x', y='y', line_width=3, source=source_b_spline, color="red", hover_alpha=1.0)
+
+    Plotter.bokeh_js_on_change(slider, 'value', callback)
+    Plotter.bokeh_js_on_change(source_dots, 'data', callback)
+
+    col = Plotter.bokeh_column(slider, fig)
+
+    st.bokeh_chart(col, use_container_width=True)

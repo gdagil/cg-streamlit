@@ -1,7 +1,15 @@
+from typing import Any
+
+import pandas as pd
+import numpy as np
+
+
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-import numpy as np
+from bokeh.layouts import column
+from bokeh.plotting import figure
+from bokeh.models import PointDrawTool, ColumnDataSource, CustomJS, Slider, Column
 
 
 class Plotter:
@@ -44,6 +52,47 @@ class Plotter:
         
         ultra_plot.update_layout(height=1000, width=900)
         return ultra_plot
+
+    @staticmethod
+    def get_bokeh_column_data_source(data:dict[str,Any]) -> ColumnDataSource:
+        return ColumnDataSource(data)
+
+    @staticmethod
+    def get_bakeh_dotes_drag(source:ColumnDataSource) -> figure:
+        p = figure(x_range=(0, 10), y_range=(0, 10), tools=["zoom_out","zoom_in"],
+            title='B-spline')
+        p.background_fill_color = 'lightgrey'
+
+        p.line(x='x', y='y', line_width=1, line_dash="dashed", source=source, color="brown")
+
+        renderer_dots = p.scatter(x='x', y='y', source=source, size=13, color='olive')
+
+        draw_tool = PointDrawTool(renderers=[renderer_dots])
+        p.add_tools(draw_tool)
+        p.toolbar.active_tap = draw_tool
+        return p
+
+
+    @staticmethod
+    def get_bokeh_slider(start=2, end=5, value=2, step=1, title="dim") -> Slider:
+        return Slider(start=start, end=end, value=value, step=step, title=title)
+
+    @staticmethod
+    def get_bokeh_custom_js_callback(path:str, sourses:dict[str, ColumnDataSource]) -> CustomJS:
+        return CustomJS(args=sourses, code=open(path, "r").read())
+
+    @staticmethod
+    def add_bokeh_line(p:figure, **line_kwargs) -> None:
+        p.line(**line_kwargs)
+
+    @staticmethod
+    def bokeh_js_on_change(item:Any, value_type:str, callback:CustomJS):
+        item.js_on_change(value_type, callback)
+
+    @staticmethod
+    def bokeh_column(*args) -> Column:
+        return Column(*args)
+        
 
 
 class Figure:
