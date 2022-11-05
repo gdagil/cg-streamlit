@@ -1,3 +1,5 @@
+import os
+
 import streamlit as st
 import numpy as np
 
@@ -66,7 +68,7 @@ if activation_function == 'ЛР7 - Построение плоских поли�
     slider = Plotter.get_bokeh_slider()
 
     callback = Plotter.get_bokeh_custom_js_callback(
-        path="./app/utils/src/b_s_callback.js",
+        path=f"{os.path.dirname(__file__)}/utils/src/b_s_callback.js",
         sourses=dict(s_b=source_b_spline, s_d=source_dots, dim_b_s=source_b_k)
     )
     Plotter.add_bokeh_line(fig, x='x', y='y', line_width=3, source=source_b_spline, color="red", hover_alpha=1.0)
