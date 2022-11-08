@@ -1,6 +1,6 @@
 from typing import Any
 
-import pandas as pd
+from scipy.linalg import norm
 import numpy as np
 
 
@@ -54,6 +54,13 @@ class Plotter:
         return ultra_plot
 
     @staticmethod
+    def wireframe_plot_1_scene(core_fig, subs:list) -> go.Figure:
+        fig = go.Figure(core_fig)
+        fig.add_traces(subs)
+        fig.update_layout(height=1000, width=900)
+        return fig
+
+    @staticmethod
     def get_bokeh_column_data_source(data:dict[str,Any]) -> ColumnDataSource:
         return ColumnDataSource(data)
 
@@ -99,17 +106,23 @@ class Figure:
     number_of_slices = 3
     height = 8
     slice_weight = 2
+    colorscale = 'aggrnyl'
+    lighting_effects = None
 
     def __init__(
         self, 
         number_of_slices:int=3,
         slice_weight:float=2.0,
-        height:float=8.0
+        height:float=8.0,
+        colorscale:str='aggrnyl',
+        lighting_effects:dict[str,float]|None=None
         ):
 
         self.number_of_slices = number_of_slices + 1
         slice_weight = slice_weight
         self.height = height
+        self.colorscale = colorscale
+        self.lighting_effects = lighting_effects
 
     def circle(self, z_coordinate:float, radius:float=5.0, opacity:float=1.0) -> go.Surface:
         """Create a circular mesh located at 0, 0, z with radius"""
@@ -122,7 +135,9 @@ class Figure:
             y=r_grid * np.sin(theta_grid), 
             z=np.zeros_like(x_circle) + z_coordinate, 
             showscale=False,
-            opacity=opacity
+            opacity=opacity,
+            colorscale=self.colorscale,
+            lighting=self.lighting_effects
             )
 
     def cylinder(self, delta_z:float=5, radius:float=5.0, opacity:float=0.9) -> go.Surface:
@@ -134,7 +149,34 @@ class Figure:
             x=radius * np.cos(theta_grid), 
             y=radius * np.sin(theta_grid), 
             z=z_grid, 
-            colorscale=[[0, '#530b96'],[1, '#530b96']], 
+            # colorscale=[[0, '#530b96'],[1, '#530b96']], 
             showscale=False, 
-            opacity=opacity
+            opacity=opacity,
+            colorscale=self.colorscale,
+            lighting=self.lighting_effects
+            )
+
+    def cone(self, delta_z:float=5, radius_1:float=5.0, radius_2:float=2.5, opacity:float=0.9) -> go.Surface:
+        """Based on https://stackoverflow.com/a/39823124/190597 (astrokeat)"""
+        vec_point_1, vec_point_2 = np.array([0, 0, 0]), np.array([0, 0, delta_z])
+        v = vec_point_2 - vec_point_1
+        mag = norm(v)
+        v = v / mag
+        not_v = np.linspace(0, radius_1, 2)
+        n1 = np.cross(not_v, v)
+        n1 /= norm(n1)
+        n2 = np.cross(v, n1)
+        t = np.linspace(0, mag, self.number_of_slices)
+        theta_discr = np.linspace(0, 2*np.pi, self.number_of_slices)
+        t, theta = np.meshgrid(t, theta_discr)
+        R = np.linspace(radius_1, radius_2, self.number_of_slices)
+        x_array, y_array, z_array = [vec_point_1[i] + v[i] * t + R * np.cos(theta) * n1[i] + R * np.sin(theta) * n2[i] for i in [0, 1, 2]]
+        return go.Surface(
+            x=x_array, 
+            y=y_array, 
+            z=z_array, 
+            colorscale=self.colorscale,
+            showscale=False, 
+            opacity=opacity,
+            lighting=self.lighting_effects
             )
