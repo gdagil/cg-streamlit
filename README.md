@@ -1,3 +1,5 @@
+![Build](https://github.com/gdagil/cg-streamlit/actions/workflows/docker-publish.yaml/badge.svg)
+
 # cg-streamlit
 
 Лабораторные работы по дисциплине компьютерная графика, выполненные с помощью [Streamlit](https://streamlit.io/)
@@ -60,6 +62,7 @@ $$ ρ = {a\overϕ}, \qquad 0 < A \leq ϕ \leq B$$
 размеров окна
 
 ![lab_3](docs/imgs/wireframe_cone.png)
+
 ---
 
 ## Лабораторная работа № 7
