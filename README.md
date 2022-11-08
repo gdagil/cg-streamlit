@@ -25,7 +25,28 @@
 |       `-- st_utils.py
 `-- docker-compose.yaml
 ```
+
+### Запуск
+Перед запуском убедитесь, что в системе установлен `docker` и `docker-compose` коомандами:
+
+```bash
+sudo docker --version
+sudo docker-compose --version
+```
+
+Далее проверьте, запущен ли демон `docker`
+```bash
+sudo docker ps
+```
+
+Тогда можно поднимать сервис
+
+```bash
+docker run -p 8080:8080 danil2286/cg-streamlit
+```
+
 ---
+
 ## Лабораторная работа № 1
 Тема: Построение изображений 2D- кривых.
 

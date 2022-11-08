@@ -1,24 +1,12 @@
 version: '3.9'
 
-
-networks:
-  traefik-proxy:
-    external: true
-
-
 services:
   statistics:
     container_name: gdagil-labs
-    build:
-      context: ./app
-      dockerfile: Dockerfile
+    image: danil2286/cg-streamlit:latest
+    # build:
+    #   context: ./app
+    #   dockerfile: Dockerfile
     restart: always
-    networks:
-      - traefik-proxy
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.backend-statistics.entrypoints=web-secure
-      - traefik.http.routers.backend-statistics.rule=(Host(`some_host`)
-      - traefik.http.routers.backend-statistics.tls.certresolver=letsencrypt
-      - traefik.http.services.backend-statistics.loadbalancer.server.port=8501
-      - traefik.docker.network=traefik-proxy
+    ports: 
+      - 8080:8080
