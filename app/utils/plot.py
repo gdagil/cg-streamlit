@@ -106,17 +106,23 @@ class Figure:
     number_of_slices = 3
     height = 8
     slice_weight = 2
+    colorscale = 'aggrnyl'
+    lighting_effects = None
 
     def __init__(
         self, 
         number_of_slices:int=3,
         slice_weight:float=2.0,
-        height:float=8.0
+        height:float=8.0,
+        colorscale:str='aggrnyl',
+        lighting_effects:dict[str,float]|None=None
         ):
 
         self.number_of_slices = number_of_slices + 1
         slice_weight = slice_weight
         self.height = height
+        self.colorscale = colorscale
+        self.lighting_effects = lighting_effects
 
     def circle(self, z_coordinate:float, radius:float=5.0, opacity:float=1.0) -> go.Surface:
         """Create a circular mesh located at 0, 0, z with radius"""
@@ -129,7 +135,9 @@ class Figure:
             y=r_grid * np.sin(theta_grid), 
             z=np.zeros_like(x_circle) + z_coordinate, 
             showscale=False,
-            opacity=opacity
+            opacity=opacity,
+            colorscale=self.colorscale,
+            lighting=self.lighting_effects
             )
 
     def cylinder(self, delta_z:float=5, radius:float=5.0, opacity:float=0.9) -> go.Surface:
@@ -141,9 +149,11 @@ class Figure:
             x=radius * np.cos(theta_grid), 
             y=radius * np.sin(theta_grid), 
             z=z_grid, 
-            colorscale=[[0, '#530b96'],[1, '#530b96']], 
+            # colorscale=[[0, '#530b96'],[1, '#530b96']], 
             showscale=False, 
-            opacity=opacity
+            opacity=opacity,
+            colorscale=self.colorscale,
+            lighting=self.lighting_effects
             )
 
     def cone(self, delta_z:float=5, radius_1:float=5.0, radius_2:float=2.5, opacity:float=0.9) -> go.Surface:
@@ -165,7 +175,8 @@ class Figure:
             x=x_array, 
             y=y_array, 
             z=z_array, 
-            colorscale=[[0, '#530b96'],[1, '#530b96']], 
+            colorscale=self.colorscale,
             showscale=False, 
-            opacity=opacity
+            opacity=opacity,
+            lighting=self.lighting_effects
             )

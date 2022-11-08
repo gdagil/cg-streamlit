@@ -44,7 +44,7 @@ if activation_function == 'ЛР1 - функция в полярных коорд
 
 if activation_function == 'ЛР2 - гранная прямая правильная призма':
     with st.sidebar:
-        radius, delta_z, num_of_slices, cyl_op, bord_op = Wframe_3d.st_text_menu_1(st)
+        radius, delta_z, num_of_slices, cyl_op, bord_op = Wframe_3d.st_text_menu_prizm(st)
     base = Figure(num_of_slices, height=delta_z)
     list_of_figures = [
         base.cylinder(delta_z, radius, opacity=cyl_op),
@@ -58,8 +58,9 @@ if activation_function == 'ЛР2 - гранная прямая правильн�
 
 if activation_function == 'ЛР3 - Основы построения фотореалистичных изображений':
     with st.sidebar:
-        radius_1, radius_2, delta_z, num_of_slices, cyl_op, bord_op = Wframe_3d.st_text_menu_2(st)
-    base = Figure(num_of_slices, height=delta_z)
+        radius_1, radius_2, delta_z, num_of_slices, cyl_op, bord_op = Wframe_3d.st_text_menu_cone(st)
+        lighting_effects = Wframe_3d.st_lighting_effects(st)
+    base = Figure(num_of_slices, height=delta_z, lighting_effects=lighting_effects)
     cone = base.cone(delta_z, radius_1, radius_2, opacity=cyl_op)
     circle_1 = base.circle(0, radius_1, opacity=bord_op)
     circle_2 = base.circle(delta_z, radius_2, opacity=bord_op)

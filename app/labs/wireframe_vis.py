@@ -1,6 +1,6 @@
 class Wframe_3d:
     @staticmethod
-    def st_text_menu_1(st):
+    def st_text_menu_prizm(st):
         st.header('Каркасная визуализация выпуклого многогранника. Удаление невидимых линий')
 
         st.subheader('Задание:')
@@ -22,7 +22,7 @@ class Wframe_3d:
 
 
     @staticmethod
-    def st_text_menu_2(st):
+    def st_text_menu_cone(st):
         st.header('Основы построения фотореалистичных изображений')
 
         st.subheader('Задание:')
@@ -33,10 +33,58 @@ class Wframe_3d:
                 \n
                 Прямой усеченный круговой конус
             ''') 
-        radius_1 = st.slider('Нижний радиус конуса', 0.1, 10.0, step=0.1, value=5.0)
-        radius_2 = st.slider('Верхний радиус конуса', 0.1, 10.0, step=0.1, value=5.0)
-        delta_z = st.slider('Высота конуса', 0.1, 30.0, step=0.1, value=5.0)
-        num_of_slices = st.slider('Количество граней', 3, 30, step=1, value=5)
-        cyl_op = st.slider('Прозрачность цилиндра', 0.0, 1.0, step=0.1, value=0.9)
-        bord_op = st.slider('Прозрачность нижней грани', 0.0, 1.0, step=0.1, value=1.0)
+        radius_1 = st.slider('Нижний радиус конуса', 0.1, 10.0, step=0.1, value=8.1)
+        radius_2 = st.slider('Верхний радиус конуса', 0.1, 10.0, step=0.1, value=2.8)
+        delta_z = st.slider('Высота конуса', 0.1, 30.0, step=0.1, value=11.4)
+        num_of_slices = st.slider('Количество граней', 3, 30, step=1, value=30)
+        cyl_op = st.slider('Прозрачность цилиндра', 0.0, 1.0, step=0.1, value=1.0)
+        bord_op = st.slider('Прозрачность нижней и верхней грани', 0.0, 1.0, step=0.1, value=1.0)
         return radius_1, radius_2, delta_z, num_of_slices, cyl_op, bord_op
+
+
+    @staticmethod
+    def st_lighting_effects(st) -> dict[str, float]:
+        st.subheader('Освещение объекта')
+        ambient = st.slider('''ambient - рассеянный свет увеличивает общую видимость 
+            цвета, но может размыть изображение''', 
+            0.0, 
+            1.0, 
+            step=0.01, 
+            value=0.8
+        )
+        diffuse = st.slider('''diffuse - степень отражения падающих лучей
+            в различных ракурсах''', 
+            0.0, 
+            1.0, 
+            step=0.01, 
+            value=0.8
+        )
+        fresnel = st.slider('''fresnel - коэффициент отражения в зависимости от
+            угла обзора; например, бумага отражает при просмотре ее
+            от края бумаги (почти на 90 градусов), возникает сияние''', 
+            0.0, 
+            5.0, 
+            step=0.01, 
+            value=0.2
+        )
+        roughness = st.slider('''roughness - изменяет зеркальное отражение; 
+            чем грубее поверхность, чем шире и менее контрастен блеск''', 
+            0.0, 
+            1.0, 
+            step=0.01, 
+            value=0.5
+        )
+        specular = st.slider('''specular - уровень отражения падающих лучей
+            в одном направлении, вызывающий блеск''', 
+            0.0, 
+            2.0, 
+            step=0.01, 
+            value=0.05
+        )
+        return dict(
+            ambient=ambient,
+            diffuse=diffuse,
+            fresnel=fresnel,
+            roughness=roughness,
+            specular=specular
+        )
