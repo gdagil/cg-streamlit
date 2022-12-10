@@ -1,6 +1,7 @@
 import os
 
 import streamlit as st
+from stqdm import stqdm
 import numpy as np
 
 from utils import Plotter, Figure, PickerFunc
@@ -20,7 +21,8 @@ with st.sidebar:
         [
             'ЛР1 - функция в полярных координатах',
             'ЛР2 - гранная прямая правильная призма',
-            'ЛР3 - Основы построения фотореалистичных изображений',
+            'ЛР3-5 - Основы построения фотореалистичных изображений',
+            'ЛР6 - Создание анимационных эффектов',
             'ЛР7 - Построение плоских полиномиальных кривых',
         ],
         label_visibility='hidden')
@@ -56,17 +58,98 @@ if activation_function == 'ЛР2 - гранная прямая правильн�
     st.plotly_chart(prism, use_container_width=True)
 
 
-if activation_function == 'ЛР3 - Основы построения фотореалистичных изображений':
+if activation_function == 'ЛР3-5 - Основы построения фотореалистичных изображений':
     with st.sidebar:
-        radius_1, radius_2, delta_z, num_of_slices, cyl_op, bord_op = Wframe_3d.st_text_menu_cone(st)
-        lighting_effects = Wframe_3d.st_lighting_effects(st)
+        radius_1, radius_2, delta_z, num_of_slices, cyl_op, bord_op = Wframe_3d.st_text_menu_cone(st, lab="3")
+        lighting_effects = Wframe_3d.st_lighting_effects(st).dict(exclude={'r_c_steps'})
+        st.header(lighting_effects)
     base = Figure(num_of_slices, height=delta_z, lighting_effects=lighting_effects)
     cone = base.cone(delta_z, radius_1, radius_2, opacity=cyl_op)
-    circle_1 = base.circle(0, radius_1, opacity=bord_op)
-    circle_2 = base.circle(delta_z, radius_2, opacity=bord_op)
-    fig = Plotter.wireframe_plot_1_scene(cone, [circle_1, circle_2])
+    circles = [
+        base.circle(0, radius_1, opacity=bord_op),
+        base.circle(delta_z, radius_2, opacity=bord_op)
+    ]
+    fig = Plotter.wireframe_plot_1_scene(cone, circles)
     st.plotly_chart(fig, use_container_width=True)
 
+
+if activation_function == 'ЛР6 - Создание анимационных эффектов':
+    with st.sidebar:
+        radius_1, radius_2, delta_z, num_of_slices, cyl_op, bord_op = Wframe_3d.st_text_menu_cone(st, lab="6")
+        lighting_effects_lists = Wframe_3d.st_lighting_effects(st, range_control=True) # .dict(exclude={'r_c_steps'})
+        lighting_effects_checkboxes = Wframe_3d.st_lighting_effects_checkboxes(st)
+
+    lel_dict = lighting_effects_lists.dict(exclude={'r_c_steps'})
+    frames = list()
+
+    for i in stqdm(range(lighting_effects_lists.r_c_steps)):
+        lighting_effects_frame = dict()
+        for key, check in lighting_effects_checkboxes.items():
+            if check:
+                lighting_effects_frame.setdefault(key, lel_dict[key][i])
+
+        base = Figure(num_of_slices, height=delta_z, lighting_effects=lighting_effects_frame)
+        frames.append(
+            dict(
+                data=[
+                base.cone(delta_z, radius_1, radius_2, opacity=cyl_op),
+                base.circle(0, radius_1, opacity=bord_op),
+                base.circle(delta_z, radius_2, opacity=bord_op)
+                ],
+                name=f'frame-{i}'
+            )
+        )
+    fig = Plotter.wireframe_plot_1_scene(frames[0]["data"])
+    if lighting_effects_lists.r_c_steps > 1:
+        fig.update(frames=Plotter.go_frames(frames))
+        fig.update_layout(
+            updatemenus = [
+                {
+                    "buttons": [
+                        {
+                            "args": [None, Plotter.frame_args(50)],
+                            "label": "Play", 
+                            "method": "animate",
+                        },
+                        {
+                            "args": [[None], Plotter.frame_args(0)],
+                            "label": "Pause", 
+                            "method": "animate",
+                        }
+                    ],
+                    "direction": "left",
+                    "pad": {"r": 10, "t": 87},
+                    "showactive": False,
+                    "type": "buttons",
+                    "x": 0.1,
+                    "xanchor": "right",
+                    "y": 0,
+                    "yanchor": "top"
+                }
+            ],
+            sliders = [
+                {
+                    "pad": {"b": 10, "t": 60},
+                    "len": 0.9,
+                    "x": 0.1,
+                    "y": 0,
+                    "steps": [
+                        {
+                            "args": [[f.name], Plotter.frame_args(0)],
+                            "label": str(k),
+                            "method": "animate",
+                        } 
+                        for k, f in enumerate(fig.frames)
+                    ]
+                }
+            ]
+        )
+
+    st.plotly_chart(fig, use_container_width=True)
+
+
+        
+        
 
 
 if activation_function == 'ЛР7 - Построение плоских полиномиальных кривых':

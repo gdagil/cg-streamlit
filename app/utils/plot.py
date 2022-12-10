@@ -54,11 +54,15 @@ class Plotter:
         return ultra_plot
 
     @staticmethod
-    def wireframe_plot_1_scene(core_fig, subs:list) -> go.Figure:
+    def wireframe_plot_1_scene(core_fig, subs:list=[]) -> go.Figure:
         fig = go.Figure(core_fig)
         fig.add_traces(subs)
         fig.update_layout(height=1000, width=900)
         return fig
+
+    @staticmethod
+    def go_frames(frames_list:list) -> list[go.Frame]:
+        return [go.Frame(data=f["data"], name=f["name"]) for f in frames_list]
 
     @staticmethod
     def get_bokeh_column_data_source(data:dict[str,Any]) -> ColumnDataSource:
@@ -78,6 +82,15 @@ class Plotter:
         p.add_tools(draw_tool)
         p.toolbar.active_tap = draw_tool
         return p
+
+    @staticmethod
+    def frame_args(duration:int) -> dict:
+        return {
+                "frame": {"duration": duration},
+                "mode": "immediate",
+                "fromcurrent": True,
+                "transition": {"duration": duration, "easing": "linear"},
+                }
 
 
     @staticmethod
