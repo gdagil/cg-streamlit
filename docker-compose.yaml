@@ -1,7 +1,7 @@
 version: '3.9'
 
 services:
-  statistics:
+  app:
     container_name: gdagil-labs
     image: danil2286/cg-streamlit:latest
     # build:
