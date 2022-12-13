@@ -62,7 +62,6 @@ if activation_function == 'ЛР3-5 - Основы построения фото�
     with st.sidebar:
         radius_1, radius_2, delta_z, num_of_slices, cyl_op, bord_op = Wframe_3d.st_text_menu_cone(st, lab="3")
         lighting_effects = Wframe_3d.st_lighting_effects(st).dict(exclude={'r_c_steps'})
-        st.header(lighting_effects)
     base = Figure(num_of_slices, height=delta_z, lighting_effects=lighting_effects)
     cone = base.cone(delta_z, radius_1, radius_2, opacity=cyl_op)
     circles = [
